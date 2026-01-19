@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIS Year Group Identifier</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function AISYearIdentifier() {
+            const [birthDate, setBirthDate] = useState('');
+            const [result, setResult] = useState(null);
+            const [academicYear, setAcademicYear] = useState('2025-2026');
+
+            const getYearGroups = (year) => {
+                const baseYear = parseInt(year.split('-')[0]);
+                const offset = baseYear - 2025;
+                
+                return [
+                    { minDate: `${2022 + offset}-09-01`, maxDate: `${2023 + offset}-08-31`, age: '2-3', yearGroup: 'Nursery', usaEquiv: 'Nursery' },
+                    { minDate: `${2021 + offset}-09-01`, maxDate: `${2022 + offset}-08-31`, age: '3-4', yearGroup: 'Foundation', usaEquiv: 'Junior Pre-Kindergarten' },
+                    { minDate: `${2020 + offset}-09-01`, maxDate: `${2021 + offset}-08-31`, age: '4-5', yearGroup: 'Reception', usaEquiv: 'Senior Pre-Kindergarten' },
+                    { minDate: `${2019 + offset}-09-01`, maxDate: `${2020 + offset}-08-31`, age: '5-6', yearGroup: 'Year 1', usaEquiv: 'Kindergarten' },
+                    { minDate: `${2018 + offset}-09-01`, maxDate: `${2019 + offset}-08-31`, age: '6-7', yearGroup: 'Year 2', usaEquiv: 'Grade 1' },
+                    { minDate: `${2017 + offset}-09-01`, maxDate: `${2018 + offset}-08-31`, age: '7-8', yearGroup: 'Year 3', usaEquiv: 'Grade 2' },
+                    { minDate: `${2016 + offset}-09-01`, maxDate: `${2017 + offset}-08-31`, age: '8-9', yearGroup: 'Year 4', usaEquiv: 'Grade 3' },
+                    { minDate: `${2015 + offset}-09-01`, maxDate: `${2016 + offset}-08-31`, age: '9-10', yearGroup: 'Year 5', usaEquiv: 'Grade 4' },
+                    { minDate: `${2014 + offset}-09-01`, maxDate: `${2015 + offset}-08-31`, age: '10-11', yearGroup: 'Year 6', usaEquiv: 'Grade 5' },
+                    { minDate: `${2013 + offset}-09-01`, maxDate: `${2014 + offset}-08-31`, age: '11-12', yearGroup: 'Year 7', usaEquiv: 'Grade 6' },
+                    { minDate: `${2012 + offset}-09-01`, maxDate: `${2013 + offset}-08-31`, age: '12-13', yearGroup: 'Year 8', usaEquiv: 'Grade 7' },
+                    { minDate: `${2011 + offset}-09-01`, maxDate: `${2012 + offset}-08-31`, age: '13-14', yearGroup: 'Year 9', usaEquiv: 'Grade 8' },
+                    { minDate: `${2010 + offset}-09-01`, maxDate: `${2011 + offset}-08-31`, age: '14-15', yearGroup: 'Year 10', usaEquiv: 'Grade 9' },
+                    { minDate: `${2009 + offset}-09-01`, maxDate: `${2010 + offset}-08-31`, age: '15-16', yearGroup: 'Year 11', usaEquiv: 'Grade 10' },
+                    { minDate: `${2008 + offset}-09-01`, maxDate: `${2009 + offset}-08-31`, age: '16-17', yearGroup: 'Year 12', usaEquiv: 'Grade 11' },
+                    { minDate: `${2007 + offset}-09-01`, maxDate: `${2008 + offset}-08-31`, age: '17-18', yearGroup: 'Year 13', usaEquiv: 'Grade 12' },
+                ];
+            };
+
+            const yearGroups = getYearGroups(academicYear);
+
+            const handleSubmit = (date) => {
+                const dateToCheck = date || birthDate;
+                if (!dateToCheck) {
+                    setResult(null);
+                    return;
+                }
+
+                const birth = new Date(dateToCheck);
+                let foundGroup = null;
+
+                for (let group of yearGroups) {
+                    const min = new Date(group.minDate);
+                    const max = new Date(group.maxDate);
+                    
+                    if (birth >= min && birth <= max) {
+                        foundGroup = group;
+                        break;
+                    }
+                }
+
+                setResult(foundGroup);
+            };
+
+            const handleYearChange = (year) => {
+                setAcademicYear(year);
+                setResult(null);
+                if (birthDate) {
+                    setTimeout(() => handleSubmit(birthDate), 0);
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-xl p-4 md:p-8 mb-8">
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">AIS Year Group Identifier</h1>
+                            
+                            <p className="text-gray-600 mb-6 text-sm md:text-base">
+                                Enter a student's date of birth to determine their AIS year group for the selected academic year.
+                            </p>
+
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                    Select Academic Year
+                                </label>
+                                <div className="flex flex-wrap gap-2 md:gap-3">
+                                    <button
+                                        onClick={() => handleYearChange('2025-2026')}
+                                        className={`px-4 md:px-6 py-2 rounded-lg font-medium transition-colors text-sm md:text-base ${
+                                            academicYear === '2025-2026'
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        2025-2026
+                                    </button>
+                                    <button
+                                        onClick={() => handleYearChange('2026-2027')}
+                                        className={`px-4 md:px-6 py-2 rounded-lg font-medium transition-colors text-sm md:text-base ${
+                                            academicYear === '2026-2027'
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        2026-2027
+                                    </button>
+                                    <button
+                                        onClick={() => handleYearChange('2027-2028')}
+                                        className={`px-4 md:px-6 py-2 rounded-lg font-medium transition-colors text-sm md:text-base ${
+                                            academicYear === '2027-2028'
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        2027-2028
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="mb-8">
+                                <div className="flex flex-col md:flex-row gap-4 md:items-end">
+                                    <div className="flex-1">
+                                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
+                                            Date of Birth
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="birthDate"
+                                            value={birthDate}
+                                            onChange={(e) => {
+                                                setBirthDate(e.target.value);
+                                                handleSubmit(e.target.value);
+                                            }}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => handleSubmit(birthDate)}
+                                        className="w-full md:w-auto px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                                    >
+                                        Identify Year Group
+                                    </button>
+                                </div>
+                            </div>
+
+                            {result && (
+                                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-4 md:p-6 text-white">
+                                    <h2 className="text-xl md:text-2xl font-bold mb-4">Student Classification for {academicYear}</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
+                                            <p className="text-sm opacity-90 mb-1">AIS Year Group</p>
+                                            <p className="text-xl md:text-2xl font-bold">{result.yearGroup}</p>
+                                        </div>
+                                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
+                                            <p className="text-sm opacity-90 mb-1">Age Range</p>
+                                            <p className="text-xl md:text-2xl font-bold">{result.age}</p>
+                                        </div>
+                                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
+                                            <p className="text-sm opacity-90 mb-1">USA Equivalent</p>
+                                            <p className="text-xl md:text-2xl font-bold">{result.usaEquiv}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {birthDate && !result && (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+                                    <p className="font-medium text-sm md:text-base">Date of birth is outside the eligible range for {academicYear} enrollment.</p>
+                                    <p className="text-sm mt-1">Please check the reference table below for valid date ranges.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-4">{academicYear} Year Group Reference</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs md:text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-100">
+                                            <th className="px-2 md:px-4 py-2 text-left font-semibold">Date of Birth</th>
+                                            <th className="px-2 md:px-4 py-2 text-left font-semibold">Age</th>
+                                            <th className="px-2 md:px-4 py-2 text-left font-semibold">AIS Year Group</th>
+                                            <th className="px-2 md:px-4 py-2 text-left font-semibold">USA Equivalent</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {yearGroups.map((group, index) => (
+                                            <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
+                                                <td className="px-2 md:px-4 py-2">Sep 1, {group.minDate.split('-')[0]} - Aug 31, {group.maxDate.split('-')[0]}</td>
+                                                <td className="px-2 md:px-4 py-2">{group.age}</td>
+                                                <td className="px-2 md:px-4 py-2 font-semibold text-indigo-600">{group.yearGroup}</td>
+                                                <td className="px-2 md:px-4 py-2">{group.usaEquiv}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<AISYearIdentifier />, document.getElementById('root'));
+    </script>
+</body>
+</html>
